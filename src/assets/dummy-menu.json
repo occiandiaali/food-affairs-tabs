@@ -1,0 +1,204 @@
+{
+    "products": [
+      {
+        "title": "Egg",
+        "price": "150",
+        "portion": "1"
+      },
+      {
+        "title": "Ogbono",
+        "price": "800",
+        "portion": "1"
+      },
+      {
+        "title": "Eba",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Semovita",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Spaghetti",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Amala",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Fufu",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Bread",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Meat (assorted)",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Meat",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Bread",
+        "price": "250",
+        "portion": "1"
+      },
+      {
+        "title": "Fish (Panla)",
+        "price": "400",
+        "portion": "1"
+      },
+      {
+        "title": "Goat-meat",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Ponmo",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Salad",
+        "price": "300",
+        "portion": "1"
+      },
+      {
+        "title": "Bread",
+        "price": "300",
+        "portion": "1"
+      },
+      {
+        "title": "Moi-moi",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Egusi",
+        "price": "800",
+        "portion": "1"
+      },
+      {
+        "title": "Water",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Porridge",
+        "price": "300",
+        "portion": "1"
+      },
+      {
+        "title": "Turkey",
+        "price": "1000",
+        "portion": "1"
+      },
+      {
+        "title": "Turkey",
+        "price": "1200",
+        "portion": "1"
+      },
+      {
+        "title": "Rice (Jollof)",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Plantain",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Pack (plastic)",
+        "price": "100",
+        "portion": "1"
+      },
+      {
+        "title": "Meat (normal)",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Rice (Fried)",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Beans",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Fish (Titus)",
+        "price": "600",
+        "portion": "1"
+      },
+      {
+        "title": "Afang",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Edika-Ikong",
+        "price": "800",
+        "portion": "1"
+      },
+      {
+        "title": "Pack (foam)",
+        "price": "50",
+        "portion": "1"
+      },
+      {
+        "title": "Efo",
+        "price": "800",
+        "portion": "1"
+      },
+      {
+        "title": "Rice (White)",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Soft drink",
+        "price": "250",
+        "portion": "1"
+      },
+      {
+        "title": "Soft drink",
+        "price": "300",
+        "portion": "1"
+      },
+      {
+        "title": "Soft drink",
+        "price": "700",
+        "portion": "1"
+      },
+      {
+        "title": "Soft drink",
+        "price": "200",
+        "portion": "1"
+      },
+      {
+        "title": "Chicken",
+        "price": "1200",
+        "portion": "1"
+      },
+      {
+        "title": "Chicken",
+        "price": "1000",
+        "portion": "1"
+      }
+    ]
+  }
