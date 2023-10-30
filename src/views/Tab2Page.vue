@@ -107,14 +107,13 @@
             </div>
             <ion-list>
               <ion-item>
-                <input :name="p.title" @input="portionInput($event)" style="width: 100px; margin-top: 6px;" type="number" placeholder="portion" v-model="p.portion" />
+                <input :name="p.title" style="width: 100px; margin-top: 6px;" type="number" placeholder="portion" v-model="p.portion" />
               </ion-item>
             </ion-list>
             <input
               type="checkbox"
               aria-label="menu item"
               :id="i.toString()"
-              :disabled="goodToGo === false"
               @change="menuItemCheckAction($event, p.price, p.title, p.portion)"
             />
           </div>
