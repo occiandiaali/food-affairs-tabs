@@ -43,6 +43,13 @@ http://ionicframework.com/docs/theming/ */
   --ion-color-warning-shade: #e0ac08;
   --ion-color-warning-tint: #ffca22;
 
+    /** action-button **/
+    --ion-color-action-button: #90149b;
+    --ion-color-action-button-contrast: #000000;
+    --ion-color-action-button-contrast-rgb: 0, 0, 0;
+    --ion-color-action-button-shade: #ce08e0;
+    --ion-color-action-button-tint: #bb4bb2;
+
   /** danger **/
   --ion-color-danger: #eb445a;
   --ion-color-danger-rgb: 235, 68, 90;
@@ -145,6 +152,10 @@ http://ionicframework.com/docs/theming/ */
     --ion-color-light-contrast-rgb: 255,255,255;
     --ion-color-light-shade: #1e2023;
     --ion-color-light-tint: #383a3e;
+  }
+
+  ion-content {
+    --overflow-y: hidden
   }
 
   /*
