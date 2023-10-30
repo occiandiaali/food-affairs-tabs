@@ -16,7 +16,6 @@
       <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
     </ion-avatar>
     <ion-label>@admin3000</ion-label>
-    <ion-icon :icon="closeCircle"></ion-icon>
   </ion-chip>
 
       <!-- <ExploreContainer name="Tab 1 page" /> -->
@@ -146,7 +145,7 @@ const chartOptions = {
 .week-div {
   display: flex;
   flex-direction: column;
-  margin-top: 20%;
+  margin-top: 28%;
 }
 
 .month-div {
