@@ -19,7 +19,7 @@
     <span>@admin3000</span>
   </ion-avatar>
   <div id="btn-div-grid">
-    <div class="btn-div" aria-roledescription="button" @click="setOpen(true)">
+    <div class="btn-div" aria-roledescription="button" @click="openModal">
       <ion-icon :icon="menuOutline" color="warning" size="large"></ion-icon>
       <ion-label>Menu</ion-label>
     </div>
@@ -37,7 +37,7 @@
     </div>
   </div>
 </div>
-<ion-modal :is-open="isOpen">
+<!-- <ion-modal :is-open="isOpen">
       <ion-header>
         <ion-toolbar>
           <ion-title>Modal</ion-title>
@@ -53,20 +53,34 @@
           dicta.
         </p>
       </ion-content>
-    </ion-modal>
+    </ion-modal> -->
     </ion-content>
   </ion-page>
 </template>
 
 <script setup lang="ts">
- import { IonAvatar, IonPage, IonButtons, IonButton, IonIcon, IonModal, IonHeader, IonLabel, IonToolbar, IonContent, IonTitle } from '@ionic/vue';
+ import { IonAvatar, IonPage, IonButtons, IonButton, IonIcon, IonModal, IonHeader, IonLabel, IonToolbar, IonContent, IonTitle, modalController } from '@ionic/vue';
   import { ref } from 'vue';
   import {menuOutline, fileTrayFullOutline, settingsOutline, chatboxOutline} from 'ionicons/icons'
 //import ExploreContainer from '@/components/ExploreContainer.vue';
+import ModalContainer from '@/components/ModalContainer.vue';
 
-const isOpen = ref(false);
+// const isOpen = ref(false);
+// const setOpen = (open: boolean) => (isOpen.value = open);
 
-const setOpen = (open: boolean) => (isOpen.value = open);
+const openModal = async () => {
+    const modal = await modalController.create({
+      component: ModalContainer,
+    });
+
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+     // message.value = `Hello, ${data}!`;
+    }
+  };
 </script>
 
 <style scoped>

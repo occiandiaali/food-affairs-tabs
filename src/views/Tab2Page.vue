@@ -92,15 +92,15 @@
             <ion-icon @click="orderClear" :icon="trashOutline" color="danger"></ion-icon>
           </div>
           </div>
-          <ion-searchbar
+          <!-- <ion-searchbar
           show-clear-button="focus"
           v-model="filterTerm"
           placeholder="Search"
-        ></ion-searchbar>
+        ></ion-searchbar> -->
       </div>
       <div class="menu-section-div">
         <ion-list>
-          <div class="menu-item" v-for="(p, i) in filteredItems" :key="i">
+          <div class="menu-item" v-for="(p, i) in sortedMenu" :key="i">
             <div id="item-price-col">
               <ion-label id="item-label">{{ p.title}}</ion-label>
             <span id="unit-cost">NGN {{ p.price }}</span>
@@ -155,16 +155,28 @@ const orderTotal = ref(0)
 const totalMsg = computed(() => orderTotal.value)
 
 let savingEntry = false
+const sortedMenu = dummydata.products.sort((a, b) => {
+ let lowerTitA = a.title.toLowerCase(),
+lowerTitB = b.title.toLowerCase()
 
-
-const filterTerm = ref("")
-const filteredItems = computed(() => {
-  return dummydata.products.filter((item) => {
-    return (
-      item.title.toLowerCase().indexOf(filterTerm.value.toLowerCase()) != -1
-    )
-  })
+if (lowerTitA < lowerTitB) {
+  return -1
+}
+if (lowerTitA > lowerTitB) {
+  return 1
+}
+return 0
 })
+
+
+// const filterTerm = ref("")
+// const filteredItems = computed(() => {
+//   return dummydata.products.filter((item) => {
+//     return (
+//       item.title.toLowerCase().indexOf(filterTerm.value.toLowerCase()) != -1
+//     )
+//   })
+// })
 
 const order = ref<{
   title: string,
@@ -258,7 +270,7 @@ ion-text {
 
 .menu-section-div {
   width: 90vw;
-  max-height: 280px;
+  max-height: 350px;
   /* border: 1px solid rgb(221, 185, 185); */
   margin-top: 6px;
   padding: 4px;
