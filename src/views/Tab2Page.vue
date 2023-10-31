@@ -81,7 +81,7 @@
       </div>
       <div class="menu-section-div">
         <ion-list>
-          <div class="menu-item" v-for="(p, i) in sortedMenu" :key="i">
+          <div class="menu-item" v-for="(p, i) in resultRef" :key="i">
             <div id="item-price-col">
               <ion-label id="item-label">{{ p.title}}</ion-label>
             <span id="unit-cost">NGN {{ p.price }}</span>
@@ -127,27 +127,36 @@ import {
   IonToolbar,
 } from "@ionic/vue";
 import { trashOutline } from "ionicons/icons";
-import dummydata from './../assets/dummy-menu.json'
+//import dummydata from './../assets/dummy-menu.json'
+import { addDoc, collection, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import db from "./../firebase/init.js";
 
 const paymentType = ref("--")
 const transferDetails = ref("")
 const customerPhone = ref('')
 const orderTotal = ref(0)
 const totalMsg = computed(() => orderTotal.value)
+const dailyTotal = ref(0)
 
+const tempArr: DocumentData[] = [];
+const resultRef = ref<DocumentData[]>([])
+//let sortedMenu: DocumentData[] = [];
+const loadingFromFirestore = ref(true)
 let savingEntry = false
-const sortedMenu = dummydata.products.sort((a, b) => {
- let lowerTitA = a.title.toLowerCase(),
-lowerTitB = b.title.toLowerCase()
 
-if (lowerTitA < lowerTitB) {
-  return -1
-}
-if (lowerTitA > lowerTitB) {
-  return 1
-}
-return 0
-})
+
+// sortedMenu = resultRef.value.sort((a, b) => {
+//  let lowerTitA = a.title.toLowerCase(),
+// lowerTitB = b.title.toLowerCase()
+
+// if (lowerTitA < lowerTitB) {
+//   return -1
+// }
+// if (lowerTitA > lowerTitB) {
+//   return 1
+// }
+// return 0
+// })
 
 const order = ref<{
   title: string,
@@ -197,18 +206,68 @@ const menuItemCheckAction = (event: any, price: string, title: string, portion: 
 
 const saveOrderEntry = async () => {
   savingEntry = true;
-setTimeout(() => {
+  
+  const recordRef = collection(db, "orders")
+
+  // create new data as obj to send to firestore
+  const dataObj = {
+    date: new Date().toLocaleString(),
+    items: order.value,
+    payment: paymentType.value,
+    total: orderTotal.value,
+    customer: customerPhone.value,
+    transferDetails: transferDetails.value ?? null,
+    transferConfirmed: false,
+  }
+
+  const sum = dataObj.total
+  dailyTotal.value += sum;
+
+  await addDoc(recordRef, dataObj)
+
   console.log(`
   Entry: Total: ${totalMsg.value}
-  Order: ${JSON.stringify(order.value)}
+  Order: ${JSON.stringify(dataObj)}
   Paid via: ${paymentType.value}
   Customer: ${customerPhone.value}
   `)
   orderClear()
-  window.location.reload()
   savingEntry = false
-}, 5000)
+  location.reload()
 }
+
+const getMenuFromFirestore = async () => {
+  const querySnap = await getDocs(collection(db, "menu"));
+  querySnap.forEach((doc) => {
+    console.log("doc: ", JSON.stringify(doc.data()))
+    tempArr.push(doc.data());
+    loadingFromFirestore.value = false;
+  });
+  return tempArr;
+}
+
+onMounted(async () => {
+  try {
+   const res = await getMenuFromFirestore();
+ 
+  console.log("temp Arr: ", res);
+  resultRef.value = res.sort((a, b) => {
+ let lowerTitA = a.title.toLowerCase(),
+lowerTitB = b.title.toLowerCase()
+
+if (lowerTitA < lowerTitB) {
+  return -1
+}
+if (lowerTitA > lowerTitB) {
+  return 1
+}
+return 0
+});
+
+ } catch (error) {
+  console.log(e => console.log('Error fetching..', e))
+ }
+})
 </script>
 
 <style scoped>
