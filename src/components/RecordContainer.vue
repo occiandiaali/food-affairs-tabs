@@ -12,13 +12,13 @@
     </ion-header>
     <ion-content class="ion-padding">
         <div v-if="loadingRecords" class="content-div">Loading...</div>
-        <div v-if="filteredItems.length" id="records-list-div">
+        <div v-if="resultRef.length" id="records-list-div">
             <ion-searchbar
             v-model="filterTerm"
             show-clear-button="focus"
             placeholder="Search.."
           ></ion-searchbar>
-          <ion-list v-for="(item, i) in filteredItems" :key="i">
+          <ion-list v-for="(item, i) in resultRef" :key="i">
             <ion-item-group>
               <ion-item-divider>
                 <ion-icon
@@ -26,26 +26,41 @@
                   id="delete-icon"
                   @click="deleteEntry()"
                 ></ion-icon>
-                <ion-label>Sale on {{ new Date().getDate() }}</ion-label>
+                <ion-label>Sale on {{ item.date }}</ion-label>
                 <ion-checkbox
                   slot="end"
                   :key="i"
                   @ion-change="
-                    printReceipt()
+                    printReceipt(
+                        item.date,
+                      JSON.stringify(item.items),
+                      item.total,
+                      item.customer
+                    )
                   "
                 ></ion-checkbox>
               </ion-item-divider>
               <div class="order-div">
-                <ion-item>
-                  <ion-text>{{ item.title }}</ion-text>
-                </ion-item>
-                <!-- <ion-item v-if="item.customer?.length">
-                  <ion-label>Customer: {{ item.customer }}</ion-label>
+                <!-- <ion-item>
+                  <ion-text>{{ item.items }}</ion-text>
                 </ion-item> -->
-                <ion-item>
-                  <ion-label>Total: NGN {{ item.price }}</ion-label>
+                <div id="order-items-div">
+                  <ion-list>
+                    <ion-item v-for="it in item.items">
+                      <ion-text>{{it.portions}} portion(s) of</ion-text>
+                  <ion-text>{{ it.title }}</ion-text>
+              <ion-text>NGN {{ it.price }}</ion-text>
                 </ion-item>
-<!-- 
+                  </ion-list>
+                </div>
+
+                <ion-item v-if="item.customer?.length">
+                  <ion-label>Customer: {{ item.customer }}</ion-label>
+                </ion-item>
+                <ion-item>
+                  <ion-label>Total: NGN {{ item.total }}</ion-label>
+                </ion-item>
+
                 <ion-item v-if="item.payment === 'cash'">
                   <ion-label> Paid: {{ item.payment }} </ion-label>
                 </ion-item>
@@ -65,7 +80,7 @@
                     :disabled="item.transferConfirmed"
                     >{{ !item.transferConfirmed ? 'Confirm' : 'Done' }}</ion-button
                   >
-                </ion-item> -->
+                </ion-item>
               </div>
             </ion-item-group>
             <ion-item-divider></ion-item-divider>
@@ -79,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+
 import { computed, onMounted, ref } from "vue";
 import {
   IonButton,
@@ -101,13 +117,25 @@ import {
   modalController
 } from "@ionic/vue";
 import { closeOutline } from "ionicons/icons";
+import {
+  query,
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  where,
+  DocumentData,
+} from "firebase/firestore";
+import db from './../firebase/init.js'
+import {usePDF} from 'vue3-pdfmake'
 
-import dummydata from './../assets/dummy-menu.json'
+//import dummydata from './../assets/dummy-menu.json'
 
+const pdfmake = usePDF()
 const loadingRecords = ref(true)
-const orders: any[] = []
-//const resultRef: any[] = []
-const sortedMenu = dummydata.products.sort((a, b) => {
+const orders: DocumentData[] = []
+const resultRef = ref<DocumentData[]>([])
+const sortedMenu = resultRef.value.sort((a, b) => {
  let lowerTitA = a.title.toLowerCase(),
 lowerTitB = b.title.toLowerCase()
 
@@ -130,14 +158,73 @@ const filteredItems = computed(() => {
 const cancel = () => modalController.dismiss(null, 'cancel');
 //const confirm = () => modalController.dismiss(name.value, 'confirm');
 const deleteAll = () => alert("You want to delete the entire menu?")
-const confirmTransaction = () => {}
-const deleteEntry = () => {}
-const printReceipt = () => {}
 
-onMounted(() => {
-    setTimeout(() => {
-        loadingRecords.value = false
-    }, 5000);
+const confirmed = ref(false)
+const confirmTransaction = async (details: string) => {
+    const q = query(
+    collection(db, "orders"),
+    where("transferDetails", "==", details)
+  );
+  const qSnap = await getDocs(q);
+  qSnap.forEach((doc) => {
+    console.log("B4: ", doc.data());
+    updateDoc(doc.ref, {
+      transferConfirmed: true,
+    });
+    //  console.log(doc.id, " => ", doc.data())
+    console.log("After: ", doc.data());
+  });
+  confirmed.value = true;
+}
+
+const deleteEntry = () => {}
+const printReceipt = (date: any, items: any, amt: any, client: any) => {
+    if (
+    confirm(`
+  Print out:
+  Date: ${date}
+  Order: ${items}
+  Total: ${amt}
+  Customer: ${client}
+  `)
+  ) {
+    pdfmake
+      .createPdf({
+        content: [
+          `
+          <h1>Food Affairs</h1>
+          <h2>Invoice</h2>
+          <ul>
+      <li>Date: ${date}</li>
+      <li>Order: ${items}</li>
+      <li>Total: ${amt}</li>
+      <li>Customer: ${client}</li>
+  </ul>
+      `,
+        ],
+      })
+      .download();
+  }
+}
+
+const getOrders = async () => {
+    const querySnap = await getDocs(collection(db, "orders"))
+    querySnap.forEach((doc) => {
+        console.log("doc: ", JSON.stringify(doc.data()))
+        orders.push(doc.data())
+        loadingRecords.value = false;
+    })
+    return orders;
+}
+
+onMounted(async () => {
+    try {
+        const result = await getOrders()
+      //  console.log('Fetched orders: ', JSON.stringify(result))
+        resultRef.value = result
+    } catch (error) {
+        console.log('Error fetching orders...', error)
+    }
 })
 </script>
 
@@ -153,6 +240,42 @@ onMounted(() => {
   width: 250px;
   height: 250px;
   border-radius: 100%;
+}
+
+ion-text {
+  padding-right: 8px;
+}
+
+#orders {
+  text-wrap: wrap;
+  padding: 6px;
+}
+
+.order-div {
+  display: flex;
+  flex-direction: column;
+}
+
+#order-items-div {
+display: flex;
+flex-direction: column;
+justify-content: space-evenly;
+border: 1px solid rgb(189, 150, 189);
+border-radius: 8px;
+margin: 4px;
+padding: 4px;
+}
+
+#records-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#transfer-block {
+  display: flex;
+  flex-direction: column;
 }
 
 #records-list-div {

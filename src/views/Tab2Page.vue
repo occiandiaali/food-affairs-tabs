@@ -15,26 +15,7 @@
         <!-- <h2>Record new sale</h2> -->
         <div class="order-items-div">
           <ion-list class="order-items-div-list" v-if="order.length">
-            <!-- <ion-item class="order-item">
-              <ion-text>Egg roll</ion-text>
-              <ion-text>2 portions</ion-text>
-              <ion-text>300 NGN</ion-text>
-            </ion-item>
-            <ion-item class="order-item">
-              <ion-text>Ogbono</ion-text>
-              <ion-text>1 portion(s)</ion-text>
-              <ion-text>800 NGN</ion-text>
-            </ion-item>
-            <ion-item class="order-item">
-              <ion-text>Egg roll</ion-text>
-              <ion-text>2 portions</ion-text>
-              <ion-text>300 NGN</ion-text>
-            </ion-item>
-            <ion-item class="order-item">
-              <ion-text>Ogbono</ion-text>
-              <ion-text>1 portion(s)</ion-text>
-              <ion-text>800 NGN</ion-text>
-            </ion-item> -->
+ 
             <ion-item class="order-item" v-for="(item, i) in order" :key="i">
               <ion-text>{{ item.title }}</ion-text>
               <ion-text>{{item.portion}} portions</ion-text>
@@ -167,16 +148,6 @@ if (lowerTitA > lowerTitB) {
 }
 return 0
 })
-
-
-// const filterTerm = ref("")
-// const filteredItems = computed(() => {
-//   return dummydata.products.filter((item) => {
-//     return (
-//       item.title.toLowerCase().indexOf(filterTerm.value.toLowerCase()) != -1
-//     )
-//   })
-// })
 
 const order = ref<{
   title: string,
