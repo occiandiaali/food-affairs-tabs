@@ -143,7 +143,7 @@ const deleteAll = () => alert("You want to delete the entire menu?")
 <style scoped>
 #menu-list-div {
     overflow-y: auto;
-    width: 90vw;
+    width: 100vw;
   max-height: 360px;
   border: 1px solid rgb(221, 185, 185);
   margin-top: 6px;
