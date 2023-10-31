@@ -14,7 +14,7 @@
       <!-- <ion-item>
         <ion-input label-placement="stacked" label="Enter your name" v-model="name" placeholder="Your name"></ion-input>
       </ion-item> -->
-      <MenuContainer />
+      <RecordContainer />
     </ion-content>
   </template>
 
@@ -30,11 +30,13 @@ import {
   IonInput,
   modalController,
 } from '@ionic/vue';
-import { defineComponent, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import MenuContainer from './MenuContainer.vue';
+import RecordContainer from './RecordContainer.vue';
 
 const name = ref();
+const containerName = ref()
 
 const cancel = () => modalController.dismiss(null, 'cancel');
 //const confirm = () => modalController.dismiss(name.value, 'confirm');

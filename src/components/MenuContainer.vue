@@ -1,4 +1,15 @@
 <template>
+        <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-button color="medium" @click="cancel">Cancel</ion-button>
+        </ion-buttons>
+        <ion-title>Menu Editor</ion-title>
+        <ion-buttons slot="end">
+          <ion-button @click="deleteAll" :strong="true">Delete All</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
     <ion-content>
         <div id="new-item-div">
             <ion-item>
@@ -60,8 +71,10 @@ import {
   IonModal,
   IonPage,
   IonSearchbar,
+  IonTitle,
   IonToggle,
   IonToolbar,
+  modalController
 } from "@ionic/vue";
 import {
   list,
@@ -122,7 +135,9 @@ const deleteItemFromMenu = async (id: any) => {
  // await deleteDoc(doc(db, 'menu', id))
   alert(`Deleting item ID: ${id}`)
 }
-
+const cancel = () => modalController.dismiss(null, 'cancel');
+//const confirm = () => modalController.dismiss(name.value, 'confirm');
+const deleteAll = () => alert("You want to delete the entire menu?")
 </script>
 
 <style scoped>

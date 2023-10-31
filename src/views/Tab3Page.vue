@@ -19,11 +19,11 @@
     <span>@admin3000</span>
   </ion-avatar>
   <div id="btn-div-grid">
-    <div class="btn-div" aria-roledescription="button" @click="openModal">
+    <div class="btn-div" aria-roledescription="button" @click="openMenu">
       <ion-icon :icon="menuOutline" color="warning" size="large"></ion-icon>
       <ion-label>Menu</ion-label>
     </div>
-    <div class="btn-div" aria-roledescription="button">
+    <div class="btn-div" aria-roledescription="button" @click="openHistory">
       <ion-icon :icon="fileTrayFullOutline" color="warning" size="large"></ion-icon>
       <ion-label>History</ion-label>
     </div>
@@ -64,16 +64,54 @@
   import {menuOutline, fileTrayFullOutline, settingsOutline, chatboxOutline} from 'ionicons/icons'
 //import ExploreContainer from '@/components/ExploreContainer.vue';
 import ModalContainer from '@/components/ModalContainer.vue';
+import MenuContainer from '@/components/MenuContainer.vue';
+import RecordContainer from '@/components/RecordContainer.vue';
 
 // const isOpen = ref(false);
 // const setOpen = (open: boolean) => (isOpen.value = open);
 
-const openModal = async () => {
+const openModal = async (tag: string) => {
     const modal = await modalController.create({
       component: ModalContainer,
+      componentProps: {
+        containerName: tag
+      }
     });
 
     modal.present();
+
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+     // message.value = `Hello, ${data}!`;
+    }
+  };
+
+  const openMenu = async () => {
+    const modal = await modalController.create({
+      component: MenuContainer
+
+    });
+
+    modal.present();
+
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+     // message.value = `Hello, ${data}!`;
+    }
+  };
+
+  const openHistory = async () => {
+    const modal = await modalController.create({
+      component: RecordContainer,
+
+    });
+
+    modal.present();
+
 
     const { data, role } = await modal.onWillDismiss();
 
