@@ -65,7 +65,7 @@
                   <ion-label>Total: NGN {{ item.total }}</ion-label>
                 </ion-item>
 
-                <ion-item v-if="item.payment === 'cash'">
+                <ion-item v-if="item.payment === 'cash' || item.payment === 'POS'">
                   <ion-label> Paid: {{ item.payment }} </ion-label>
                 </ion-item>
                 <ion-item v-else>

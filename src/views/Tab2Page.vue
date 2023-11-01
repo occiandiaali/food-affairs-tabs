@@ -45,10 +45,10 @@
                 value="transfer"
                 v-model="paymentType"
               />
-              <label for="transfer" class="radio-label">POS</label>
+              <label for="pos" class="radio-label">POS</label>
               <input
                 type="radio"
-                id="pos"
+                id="POS"
                 value="POS"
                 v-model="paymentType"
               />
