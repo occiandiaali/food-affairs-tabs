@@ -38,7 +38,7 @@
         <ion-searchbar show-clear-button="focus" v-model="filterTerm" placeholder="Search"></ion-searchbar>
         <div id="menu-list-div">
             <ion-list>
-          <div v-for="result in filteredItems.sort()" :key="result.id">
+          <div v-for="result in filteredItems.sort()" :key="result.id" v-if="filteredItems.length">
             <ion-item>
             <ion-input label="Item:" type="text" v-model="result.title" :disabled="selected !== result.id" :placeholder="result.title"></ion-input>
             <ion-input label="Price:" type="number" v-model="result.price" :disabled="selected !== result.id" :placeholder="result.price"></ion-input>
@@ -48,6 +48,11 @@
             <ion-icon slot="end" :icon="trashOutline" color="danger" style="margin-left: 12px;" @click="deleteItemFromMenu(result.id)"></ion-icon>
             </ion-item>
           </div>
+          <div v-else id="no-internet-div">
+        <h2>Internet connection issue..</h2>
+        <span id="internet-out-advice">Make sure you're connected, then refresh this page</span>
+        <ion-icon :icon="wifiOutline" color="danger" id="internet-out-icon"></ion-icon>
+      </div>
         </ion-list>
         </div>
     </ion-content>
@@ -84,6 +89,7 @@ import {
   micOutline,
   personOutline,
   trashOutline,
+  wifiOutline
 } from "ionicons/icons";
 import {
   setDoc,
@@ -214,6 +220,15 @@ return 0
 
 <style scoped>
 
+#internet-out-advice {
+  color: grey;
+  text-wrap: wrap;
+}
+
+#internet-out-icon {
+  font-size: 150px;
+}
+
 #menu-list-div {
     overflow-y: auto;
     width: 100vw;
@@ -228,5 +243,15 @@ return 0
     padding: 4px;
     border: 1px solid rgb(165, 148, 165);
     border-radius: 8px;
+}
+
+#no-internet-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 </style>

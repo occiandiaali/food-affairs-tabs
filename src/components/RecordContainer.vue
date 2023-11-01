@@ -116,7 +116,7 @@ import {
   IonToolbar,
   modalController
 } from "@ionic/vue";
-import { closeOutline } from "ionicons/icons";
+import { closeOutline, wifiOutline } from "ionicons/icons";
 import {
   query,
   collection,

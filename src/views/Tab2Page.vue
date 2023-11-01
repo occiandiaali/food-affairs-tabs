@@ -98,14 +98,14 @@
             </div>
             <ion-list>
               <ion-item>
-                <input :name="p.title" style="width: 100px; margin-top: 6px;" type="number" placeholder="portion" v-model="p.portion" />
+                <label>qty <input :name="p.title" style="width: 100px; margin-top: 6px;" type="number" placeholder="portion" v-model="p.portions" /></label>
               </ion-item>
             </ion-list>
             <input
               type="checkbox"
               aria-label="menu item"
               :id="i.toString()"
-              @change="menuItemCheckAction($event, p.price, p.title, p.portion)"
+              @change="menuItemCheckAction($event, p.price, p.title, p.portions)"
             />
           </div>
         </ion-list>
@@ -149,6 +149,7 @@ import db from "./../firebase/init.js";
 const paymentType = ref("--")
 const transferDetails = ref("")
 const customerPhone = ref('')
+const orderTotalArray: number[] = []
 const orderTotal = ref(0)
 const totalMsg = computed(() => orderTotal.value)
 const dailyTotal = ref(0)
@@ -185,15 +186,24 @@ const orderClear = () => {
   transferDetails.value = ""
   customerPhone.value = ""
   order.value = []
+  location.reload()
 }
 
 const checkedItem = (price: string, title: string, portion: string) => {
-  const total: number = +portion * +price 
-  orderTotal.value += total;
+ // const total: number = +portion * +price 
+ const itemAmt = (+portion * +price)
+ orderTotalArray.push(itemAmt )
+  orderTotal.value = orderTotalArray.reduce((acc, curr) => {
+    return acc + curr
+  }, 0)
   order.value.push({title, unit: price, portion})
 }
 const uncheckedItem = (price: string, title: string, portion: string) => {
-  orderTotal.value -= +portion * +price
+  //orderTotal.value -= +portion * +price
+ orderTotalArray.splice(orderTotalArray.indexOf(+portion * +price), 1)
+ orderTotal.value = orderTotalArray.reduce((acc, curr) => {
+    return acc + curr
+  }, 0)
   order.value.splice(
     order.value.findIndex((v) => v.title === title), 1
   )
@@ -338,6 +348,8 @@ ion-text {
   justify-content: center;
   align-items: center;
   padding-top: 10%;
+  padding-left: 5%;
+  padding-right: 5%;
 }
 
 .order-item {
