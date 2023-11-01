@@ -18,7 +18,11 @@
             show-clear-button="focus"
             placeholder="Search.."
           ></ion-searchbar>
-          <ion-list v-for="(item, i) in resultRef" :key="i">
+          <ion-list v-for="(item, i) in resultRef.filter((item) => {
+    return (
+      item.date.indexOf(filterTerm) != -1
+    )
+  })" :key="i">
             <ion-item-group>
               <ion-item-divider>
                 <ion-icon
@@ -116,7 +120,7 @@ import {
   IonToolbar,
   modalController
 } from "@ionic/vue";
-import { closeOutline, wifiOutline } from "ionicons/icons";
+import { closeOutline } from "ionicons/icons";
 import {
   query,
   collection,
@@ -129,13 +133,31 @@ import {
 import db from './../firebase/init.js'
 import {usePDF} from 'vue3-pdfmake'
 
-//import dummydata from './../assets/dummy-menu.json'
-
 const pdfmake = usePDF()
 const loadingRecords = ref(true)
 const orders: DocumentData[] = []
 const resultRef = ref<DocumentData[]>([])
-const sortedMenu = resultRef.value.sort((a, b) => {
+// const sortedMenu = resultRef.value.sort((a, b) => {
+//  let lowerTitA = a.title.toLowerCase(),
+// lowerTitB = b.title.toLowerCase()
+
+// if (lowerTitA < lowerTitB) {
+//   return -1
+// }
+// if (lowerTitA > lowerTitB) {
+//   return 1
+// }
+// return 0
+// })
+// const filterTerm = ref("")
+// const filteredItems = computed(() => {
+//   return sortedMenu.filter((item) => {
+//     return (
+//       item.title.toLowerCase().indexOf(filterTerm.value.toLowerCase()) != -1
+//     )
+//   })
+// })
+const ordered = resultRef.value.sort((a, b) => {
  let lowerTitA = a.title.toLowerCase(),
 lowerTitB = b.title.toLowerCase()
 
@@ -149,9 +171,9 @@ return 0
 })
 const filterTerm = ref("")
 const filteredItems = computed(() => {
-  return sortedMenu.filter((item) => {
+  return ordered.filter((item) => {
     return (
-      item.title.toLowerCase().indexOf(filterTerm.value.toLowerCase()) != -1
+      item.date.indexOf(filterTerm.value) != -1
     )
   })
 })

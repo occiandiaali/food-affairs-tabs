@@ -78,7 +78,8 @@
             ></ion-input>
           </ion-item>
           <div class="save-div">
-            <ion-button shape="round" :disabled="!transferDetails || !order.length || paymentType === '--'" @click="saveOrderEntry">{{ savingEntry ? "Wait.." : "Save" }}</ion-button>
+            <ion-button shape="round" :disabled="(!transferDetails || paymentType === '--') && !order.length" @click="saveOrderEntry">{{ savingEntry ? "Wait.." : "Save" }}</ion-button>
+            <!-- <ion-button shape="round" :disabled="(!transferDetails || paymentType === '--') && !order.length" @click="showTotal">Total</ion-button> -->
             <div v-if="paymentType !== '--' || transferDetails.length || order.length">
             <ion-icon @click="orderClear" :icon="trashOutline" color="danger"></ion-icon>
           </div>
@@ -121,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, ComputedRef, onMounted, ref } from "vue";
 import {
   IonButton,
   IonButtons,
@@ -199,7 +200,7 @@ const checkedItem = (price: string, title: string, portion: string) => {
   order.value.push({title, unit: price, portion})
 }
 const uncheckedItem = (price: string, title: string, portion: string) => {
-  //orderTotal.value -= +portion * +price
+  orderTotal.value -= +portion * +price
  orderTotalArray.splice(orderTotalArray.indexOf(+portion * +price), 1)
  orderTotal.value = orderTotalArray.reduce((acc, curr) => {
     return acc + curr
@@ -228,6 +229,12 @@ const menuItemCheckAction = (event: any, price: string, title: string, portion: 
     console.log(`Unchecked ${portion} portion(s) of ${title}`)
   }
 }
+
+// const showTotal = () => {
+//   totalSumSet.value = !totalSumSet.value
+//  return totalMsg.value = computed(() => orderTotal.value)
+//   // = 
+// }
 
 const saveOrderEntry = async () => {
   savingEntry = true;
@@ -258,7 +265,7 @@ const saveOrderEntry = async () => {
   `)
   orderClear()
   savingEntry = false
-  document.getElementById("sms-tag")?.click()
+//  document.getElementById("sms-tag")?.click() [TODO]: Uncomment to send sms notification
   location.reload()
 }
 
