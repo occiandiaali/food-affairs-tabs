@@ -31,33 +31,43 @@
         <ion-item id="radio-item">
           <!-- <ion-label>Paid</ion-label> -->
             <div id="radio-buttons-div">
+              <label for="cash" class="radio-label">Cash</label>
               <input
                 type="radio"
                 id="cash"
                 value="cash"
                 v-model="paymentType"
               />
-              <label for="cash" class="radio-label">Cash</label>
+              <label for="transfer" class="radio-label">Transfer</label>
               <input
                 type="radio"
                 id="transfer"
                 value="transfer"
                 v-model="paymentType"
               />
-              <label for="transfer" class="radio-label">Transfer</label>
+              <label for="transfer" class="radio-label">POS</label>
+              <input
+                type="radio"
+                id="pos"
+                value="POS"
+                v-model="paymentType"
+              />
             </div>
           </ion-item>
           <div id="payment-total-div">
             <p>Payment: {{ paymentType }}</p>
             <p>Total: {{ totalMsg }}</p>
           </div>
-          <ion-item v-if="paymentType === 'transfer'">
+          <div v-if="paymentType === 'transfer'">
+          <ion-item>
             <ion-input
               id="transfer-details"
               placeholder="Enter details of transfer payment"
               v-model="transferDetails"
             ></ion-input>
           </ion-item>
+          <a href="sms:+2348033487558?body=You%20have%20a%20new%20transfer%20payment" id="sms-tag">SMS will be sent to admin</a>
+        </div>
           <ion-item>
             <ion-input
               id="customer-contact"
@@ -68,7 +78,7 @@
             ></ion-input>
           </ion-item>
           <div class="save-div">
-            <ion-button shape="round" :disabled="paymentType === '--'" @click="saveOrderEntry">{{ savingEntry ? "Wait.." : "Save" }}</ion-button>
+            <ion-button shape="round" :disabled="!transferDetails || !order.length || paymentType === '--'" @click="saveOrderEntry">{{ savingEntry ? "Wait.." : "Save" }}</ion-button>
             <div v-if="paymentType !== '--' || transferDetails.length || order.length">
             <ion-icon @click="orderClear" :icon="trashOutline" color="danger"></ion-icon>
           </div>
@@ -79,7 +89,7 @@
           placeholder="Search"
         ></ion-searchbar> -->
       </div>
-      <div class="menu-section-div">
+      <div class="menu-section-div" v-if="resultRef.length">
         <ion-list>
           <div class="menu-item" v-for="(p, i) in resultRef" :key="i">
             <div id="item-price-col">
@@ -99,6 +109,11 @@
             />
           </div>
         </ion-list>
+      </div>
+      <div v-else id="no-internet-div">
+        <h2>Internet connection issue..</h2>
+        <span id="internet-out-advice">Make sure you're connected, then refresh this page</span>
+        <ion-icon :icon="wifiOutline" color="danger" id="internet-out-icon"></ion-icon>
       </div>
 
     </ion-content>
@@ -126,7 +141,7 @@ import {
   IonTextarea,
   IonToolbar,
 } from "@ionic/vue";
-import { trashOutline } from "ionicons/icons";
+import { globeOutline, trashOutline, wifiOutline } from "ionicons/icons";
 //import dummydata from './../assets/dummy-menu.json'
 import { addDoc, collection, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import db from "./../firebase/init.js";
@@ -233,6 +248,7 @@ const saveOrderEntry = async () => {
   `)
   orderClear()
   savingEntry = false
+  document.getElementById("sms-tag")?.click()
   location.reload()
 }
 
@@ -271,6 +287,15 @@ return 0
 </script>
 
 <style scoped>
+#internet-out-advice {
+  color: grey;
+  text-wrap: wrap;
+}
+
+#internet-out-icon {
+  font-size: 150px;
+}
+
 ion-text {
   margin-left: 4px;
 }
@@ -306,6 +331,15 @@ ion-text {
   padding: 4px;
   overflow-y: auto;
 }
+
+#no-internet-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10%;
+}
+
 .order-item {
   display: flex;
   justify-content: space-evenly;
@@ -341,6 +375,7 @@ ion-text {
 #radio-item {
   display: flex;
   flex-direction: row;
+  justify-content: space-evenly;
 }
 
 .save-div {
@@ -349,6 +384,17 @@ ion-text {
   align-items: center;
   justify-content: space-evenly;
   margin: 6px;
+}
+
+#sms-tag {
+  color: grey;
+  margin-left: 25%;
+  font-size: small;
+  text-decoration: none;
+}
+
+#transfer-info-sms {
+  color: grey;
 }
 
 #unit-cost {
