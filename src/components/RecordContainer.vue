@@ -51,7 +51,7 @@
                 <div id="order-items-div">
                   <ion-list>
                     <ion-item v-for="it in item.items">
-                      <ion-text>{{it.portions}} portion(s) of</ion-text>
+                      <ion-text>{{it.portion}} portion(s) of</ion-text>
                   <ion-text>{{ it.title }}</ion-text>
               <ion-text>NGN {{ it.price }}</ion-text>
                 </ion-item>
@@ -74,16 +74,28 @@
                     <p>
                       Confirmation:
                       <span id="conf">{{
-                        item.transferConfirmed ? "confirmed" : "pending.."
+                        item.transferConfirmed || confirmed ? "confirmed" : "pending.."
                       }}</span>
                     </p>
                   </ion-label>
-                  <ion-button
+                  <!-- <ion-button
                     fill="outline"
                     @click="confirmTransaction(item.transferDetails)"
                     :disabled="item.transferConfirmed"
                     >{{ !item.transferConfirmed ? 'Confirm' : 'Done' }}</ion-button
+                  > -->
+                  <div v-if="!processingTransfer">
+                    <ion-button
+                    fill="outline"
+                    @click="confirmTransaction(item.transferDetails)"
+                    :disabled="item.transferConfirmed || confirmed"
+                    >
+                    {{  !item.transferConfirmed || !confirmed ? 'Confirm' : 'Done' }}</ion-button
                   >
+                  </div>
+                  <div v-else>
+                    <p>Please wait...</p>
+                  </div>
                 </ion-item>
               </div>
             </ion-item-group>
@@ -138,6 +150,7 @@ const pdfmake = usePDF()
 const loadingRecords = ref(true)
 const orders: DocumentData[] = []
 const resultRef = ref<DocumentData[]>([])
+const processingTransfer = ref(false)
 // const sortedMenu = resultRef.value.sort((a, b) => {
 //  let lowerTitA = a.title.toLowerCase(),
 // lowerTitB = b.title.toLowerCase()
@@ -184,19 +197,21 @@ const deleteAll = () => alert("You want to delete the entire menu?")
 
 const confirmed = ref(false)
 const confirmTransaction = async (details: string) => {
-    const q = query(
+  const q = query(
     collection(db, "orders"),
     where("transferDetails", "==", details)
-  );
-  const qSnap = await getDocs(q);
-  qSnap.forEach((doc) => {
-    console.log("B4: ", doc.data());
-    updateDoc(doc.ref, {
-      transferConfirmed: true,
-    });
+    );
+    const qSnap = await getDocs(q);
+    qSnap.forEach((doc) => {
+      console.log("B4: ", doc.data());
+      updateDoc(doc.ref, {
+        transferConfirmed: true,
+      });
+      processingTransfer.value = true
     //  console.log(doc.id, " => ", doc.data())
     console.log("After: ", doc.data());
   });
+  processingTransfer.value = false;
   confirmed.value = true;
 }
 
