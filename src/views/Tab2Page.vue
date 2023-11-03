@@ -265,7 +265,7 @@ const saveOrderEntry = async () => {
   `)
   orderClear()
   savingEntry = false
-//  document.getElementById("sms-tag")?.click() [TODO]: Uncomment to send sms notification
+  document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
   location.reload()
 }
 

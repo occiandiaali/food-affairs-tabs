@@ -129,6 +129,7 @@ import {
   updateDoc,
   where,
   DocumentData,
+  orderBy
 } from "firebase/firestore";
 import db from './../firebase/init.js'
 import {usePDF} from 'vue3-pdfmake'
@@ -230,7 +231,8 @@ const printReceipt = (date: any, items: any, amt: any, client: any) => {
 }
 
 const getOrders = async () => {
-    const querySnap = await getDocs(collection(db, "orders"))
+    //const querySnap = await getDocs(collection(db, "orders"))
+    const querySnap = await getDocs(query(collection(db, "orders"), orderBy('date')))
     querySnap.forEach((doc) => {
         console.log("doc: ", JSON.stringify(doc.data()))
         orders.push(doc.data())
