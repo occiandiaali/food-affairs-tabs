@@ -59,6 +59,14 @@ ChartJS.register(
   LinearScale
 );
 
+import {doc, DocumentData, getDoc} from 'firebase/firestore'
+import db from './../firebase/init.js'
+
+import {useWeekStatStore} from './../stores/weekStatStore'
+
+const store = useWeekStatStore()
+
+
 //import ExploreContainer from '@/components/ExploreContainer.vue';
 
 const daysOfTheWeek = ["Mon", "Tues", "Wed", "Thur", "Fri", "Sat"];
@@ -71,13 +79,16 @@ const weekDayNames = [
   "Saturday",
 ];
 const d = new Date();
+const tempArr = ref<DocumentData[]>([])
+let totalsArray = [0, 0, 0, 0, 0, 0]
+let weekData = [0, 0, 0, 0, 0, 0];
 
 const weeklySalesData = {
   labels: daysOfTheWeek,
   datasets: [
     {
       label: "Weekly Sales Summary",
-      data: [600, 250, 150, 300, 100, 130],
+      data: weekData, //[600, 250, 150, 300, 100, 130],
       backgroundColor: [
         "rgba(255, 205, 86, 0.8)",
         "rgba(75, 192, 192, 0.8)",
@@ -134,6 +145,25 @@ const monthlySalesData = {
 const chartOptions = {
   responsive: true,
 };
+
+const processData = (v: DocumentData) => {
+for (let i in v) {
+  weekData[+i] = v[i]
+}
+}
+
+onMounted(async () => {
+  const wkArrRef = doc(db, 'week-stats', "WDT")
+  const wkSnap = await getDoc(wkArrRef)
+if (wkSnap.exists()) {
+ // console.log('totalsArr: ', store.weekDayTotalArray)
+  console.log('wksnap: ', wkSnap.data().wkArr)
+  // for (let snap in wkSnap.data().wkArr) {
+  //   weekData[+snap] = wkSnap.data().wkArr[snap]
+  // }
+  processData(wkSnap.data().wkArr)
+}
+})
 </script>
 
 <style scoped>

@@ -146,6 +146,10 @@ import { globeOutline, trashOutline, wifiOutline } from "ionicons/icons";
 //import dummydata from './../assets/dummy-menu.json'
 import { addDoc, collection, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import db from "./../firebase/init.js";
+import {useWeekStatStore} from './../stores/weekStatStore'
+
+const store = useWeekStatStore()
+const today = new Date().getDay()
 
 const paymentType = ref("--")
 const transferDetails = ref("")
@@ -160,6 +164,7 @@ const resultRef = ref<DocumentData[]>([])
 //let sortedMenu: DocumentData[] = [];
 const loadingFromFirestore = ref(true)
 let savingEntry = ref(false)
+let weekTotalsArr = [0, 0, 0, 0, 0, 0]
 
 
 // sortedMenu = resultRef.value.sort((a, b) => {
@@ -187,7 +192,7 @@ const orderClear = () => {
   transferDetails.value = ""
   customerPhone.value = ""
   order.value = []
-  location.reload()
+ // location.reload()
 }
 
 const checkedItem = (price: string, title: string, portion: string) => {
@@ -240,6 +245,7 @@ const saveOrderEntry = async () => {
   savingEntry.value = true;
   
   const recordRef = collection(db, "orders")
+  const weekStatsRef = collection(db, 'week-stats')
 
   // create new data as obj to send to firestore
   const dataObj = {
@@ -252,10 +258,19 @@ const saveOrderEntry = async () => {
     transferConfirmed: false,
   }
 
+  
   const sum = dataObj.total
   dailyTotal.value += sum;
+  weekTotalsArr[today - 1] += dailyTotal.value
+  console.log('Created week totals', weekTotalsArr)
+  const statObj = {
+    wkArr: weekTotalsArr
+  }
 
   await addDoc(recordRef, dataObj)
+  await setDoc(doc(db, 'week-stats', "WDT"), statObj)
+  
+  
 
   savingEntry.value = false
   console.log(`
@@ -266,24 +281,27 @@ const saveOrderEntry = async () => {
   `)
   orderClear()
   document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
-  location.reload()
+ // location.reload()
 }
 
 const getMenuFromFirestore = async () => {
   const querySnap = await getDocs(collection(db, "menu"));
   querySnap.forEach((doc) => {
-    console.log("doc: ", JSON.stringify(doc.data()))
+  //  console.log("doc: ", JSON.stringify(doc.data()))
     tempArr.push(doc.data());
     loadingFromFirestore.value = false;
   });
   return tempArr;
 }
 
+const wkArrRef = doc(db, 'week-stats', "WDT")
+
+
+
 onMounted(async () => {
   try {
    const res = await getMenuFromFirestore();
- 
-  console.log("temp Arr: ", res);
+
   resultRef.value = res.sort((a, b) => {
  let lowerTitA = a.title.toLowerCase(),
 lowerTitB = b.title.toLowerCase()
@@ -296,6 +314,11 @@ if (lowerTitA > lowerTitB) {
 }
 return 0
 });
+
+const wkSnap = await getDoc(wkArrRef)
+if (wkSnap.exists()) {
+  weekTotalsArr = wkSnap.data().wkArr
+}
 
  } catch (error) {
   console.log(e => console.log('Error fetching..', e))
@@ -335,6 +358,7 @@ ion-text {
   align-items: center;
   height: 68px;
   border: 1px solid rgb(77, 71, 83);
+  border-left: 3px solid rgb(150, 40, 150);
   border-radius: 6px;
   padding: 6px;
   margin: 4px 0px 8px 0px;
@@ -344,6 +368,7 @@ ion-text {
   width: 90vw;
   max-height: 350px;
   /* border: 1px solid rgb(221, 185, 185); */
+  
   margin-top: 6px;
   padding: 4px;
   overflow-y: auto;
