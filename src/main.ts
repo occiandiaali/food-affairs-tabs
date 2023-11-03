@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import {createPinia} from 'pinia'
 import App from './App.vue'
 import router from './router';
 
@@ -25,11 +26,13 @@ import { PDFPlugin } from 'vue3-pdfmake';
 /* Theme variables */
 import './theme/variables.css';
 
+const pinia = createPinia()
+
 const app = createApp(App)
   .use(IonicVue)
   .use(PDFPlugin)
   .use(router);
   
 router.isReady().then(() => {
-  app.mount('#app');
+  app.use(pinia).mount('#app');
 });
