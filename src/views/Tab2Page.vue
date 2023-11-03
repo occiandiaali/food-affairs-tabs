@@ -159,7 +159,7 @@ const tempArr: DocumentData[] = [];
 const resultRef = ref<DocumentData[]>([])
 //let sortedMenu: DocumentData[] = [];
 const loadingFromFirestore = ref(true)
-let savingEntry = false
+let savingEntry = ref(false)
 
 
 // sortedMenu = resultRef.value.sort((a, b) => {
@@ -237,7 +237,7 @@ const menuItemCheckAction = (event: any, price: string, title: string, portion: 
 // }
 
 const saveOrderEntry = async () => {
-  savingEntry = true;
+  savingEntry.value = true;
   
   const recordRef = collection(db, "orders")
 
@@ -257,6 +257,7 @@ const saveOrderEntry = async () => {
 
   await addDoc(recordRef, dataObj)
 
+  savingEntry.value = false
   console.log(`
   Entry: Total: ${totalMsg.value}
   Order: ${JSON.stringify(dataObj)}
@@ -264,8 +265,7 @@ const saveOrderEntry = async () => {
   Customer: ${customerPhone.value}
   `)
   orderClear()
-  savingEntry = false
- // document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
+  document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
   location.reload()
 }
 
