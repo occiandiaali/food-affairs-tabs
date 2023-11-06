@@ -27,6 +27,7 @@
           {{ getWeekRange(d).from.toDateString() }} - 
           {{ getWeekRange(d).to.toDateString() }}
         </p>
+        <p>Today's total: {{ todayTotal }}</p>
         <Bar :data="weeklySalesData" :options="chartOptions" />
       </div>
 
@@ -41,8 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeMount, onMounted, reactive, ref, watch} from 'vue'
-import { IonAvatar, IonChip, IonPage, IonHeader, IonIcon, IonLabel, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
+import {nextTick, onMounted, onUnmounted, reactive, ref, watch} from 'vue'
+import { IonAvatar, IonChip, IonPage, IonHeader, IonIcon, IonLabel, IonToolbar, IonTitle, IonContent, onIonViewWillEnter } from '@ionic/vue';
 import {close, closeCircle} from 'ionicons/icons'
 import {Bar} from 'vue-chartjs'
 import {
@@ -87,6 +88,7 @@ const d = new Date();
 const tempArr = ref<DocumentData[]>([])
 let state = reactive({wk: [0, 0, 0, 0, 0, 0]})
 let weekData = [0, 0, 0, 0, 0, 0];
+const todayTotal = ref(0)
 
 const weeklySalesData = {
   labels: daysOfTheWeek,
@@ -157,19 +159,11 @@ for (let i in v) {
 }
 }
 
-
-
-onMounted(async () => {
-  // console.log('Day 1: ', getWeekRange(d).from.toDateString())
-  // console.log('Today: ', new Date().toDateString())
+const weekdataProcedure = async () => {
   const start = getWeekRange(d).from.toDateString()
   const end = getWeekRange(d).to.toDateString()
   const todays = new Date().toDateString()
-  // console.log(`
-  // Today: ${todays} - 
-  // Start: ${start} - 
-  // End: ${end}
-  // `)
+
   const theBool = todays >= start && todays <= end ? true : false
   console.log(`Today is ${theBool}`)
   const wkArrRef = doc(db, 'week-stats', "WDT")
@@ -188,9 +182,13 @@ const strTemp = JSON.stringify(wkSnap.data().wkArr)
 console.log('Str temp: ', strTemp)
 const temp = JSON.parse(strTemp)
 console.log('temp: ', temp)
-for (let i in temp) {
-  weekData[+i] = temp[i]
-}
+const pos = temp[0]
+console.log('Pos', pos)
+weekData[new Date().getDay() - 1] = pos
+todayTotal.value = pos
+// for (let i in temp) {
+//   weekData[+i] = temp[i]
+// }
 console.log('weekData: ', weekData)
 } else {
   console.log('No document for wKArrRef exists!')
@@ -198,6 +196,51 @@ console.log('weekData: ', weekData)
   } else {
     await deleteDoc(doc(db, 'week-stats', "WDT"))
   }
+}
+
+
+
+
+onMounted(async () => {
+await weekdataProcedure()
+  // console.log('Day 1: ', getWeekRange(d).from.toDateString())
+  // console.log('Today: ', new Date().toDateString())
+  // const start = getWeekRange(d).from.toDateString()
+  // const end = getWeekRange(d).to.toDateString()
+  // const todays = new Date().toDateString()
+  // console.log(`
+  // Today: ${todays} - 
+  // Start: ${start} - 
+  // End: ${end}
+  // `)
+  // const theBool = todays >= start && todays <= end ? true : false
+  // console.log(`Today is ${theBool}`)
+  // const wkArrRef = doc(db, 'week-stats', "WDT")
+
+//   if (theBool) {
+//     const wkSnap = await getDoc(wkArrRef)
+// if (wkSnap.exists()) {
+// //   console.log('wksnap: ', wkSnap.data().wkArr)
+
+// //  const temp = wkSnap.data().wkArr
+// //  console.log('temp: ', temp)
+
+// //  processData(temp)
+// //  console.log('weekData: ', weekData)
+// const strTemp = JSON.stringify(wkSnap.data().wkArr)
+// console.log('Str temp: ', strTemp)
+// const temp = JSON.parse(strTemp)
+// console.log('temp: ', temp)
+// for (let i in temp) {
+//   weekData[+i] = temp[i]
+// }
+// console.log('weekData: ', weekData)
+// } else {
+//   console.log('No document for wKArrRef exists!')
+// }
+//   } else {
+//     await deleteDoc(doc(db, 'week-stats', "WDT"))
+//   }
 })
 
 </script>
