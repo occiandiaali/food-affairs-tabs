@@ -48,11 +48,12 @@
             <ion-icon slot="end" :icon="trashOutline" color="danger" style="margin-left: 12px;" @click="deleteItemFromMenu(result.id)"></ion-icon>
             </ion-item>
           </div>
-          <div v-else id="no-internet-div">
+          <div style="align-self: center; padding-top: 15%; padding-left: 35%;" v-else>Loading menu..</div>
+          <!-- <div id="no-internet-div">
         <h2>Internet connection issue..</h2>
         <span id="internet-out-advice">Make sure you're connected, then refresh this page</span>
         <ion-icon :icon="wifiOutline" color="danger" id="internet-out-icon"></ion-icon>
-      </div>
+      </div> -->
         </ion-list>
         </div>
     </ion-content>
@@ -189,8 +190,8 @@ const getMenuFromFirestore = async () => {
   querySnap.forEach((doc) => {
     console.log("doc: ", JSON.stringify(doc.data()))
     tempArr.push(doc.data());
-    loading.value = false;
   });
+  loading.value = false;
   return tempArr;
 }
 
