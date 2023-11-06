@@ -23,6 +23,10 @@
         <div class="section-header">
           <ion-label>Week Summary</ion-label>
         </div>
+        <p id="week-range-row">
+          {{ getWeekRange(d).from.toDateString() }} - 
+          {{ getWeekRange(d).to.toDateString() }}
+        </p>
         <Bar :data="weeklySalesData" :options="chartOptions" />
       </div>
 
@@ -37,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import {onBeforeMount, onMounted, reactive, ref, watch} from 'vue'
 import { IonAvatar, IonChip, IonPage, IonHeader, IonIcon, IonLabel, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
 import {close, closeCircle} from 'ionicons/icons'
 import {Bar} from 'vue-chartjs'
@@ -59,10 +63,11 @@ ChartJS.register(
   LinearScale
 );
 
-import {doc, DocumentData, getDoc} from 'firebase/firestore'
+import {deleteDoc, deleteField, doc, DocumentData, getDoc, updateDoc} from 'firebase/firestore'
 import db from './../firebase/init.js'
 
 import {useWeekStatStore} from './../stores/weekStatStore'
+import {getWeekRange, WEEK_DAYS} from './../utils/weekRange'
 
 const store = useWeekStatStore()
 
@@ -80,7 +85,7 @@ const weekDayNames = [
 ];
 const d = new Date();
 const tempArr = ref<DocumentData[]>([])
-let totalsArray = [0, 0, 0, 0, 0, 0]
+let state = reactive({wk: [0, 0, 0, 0, 0, 0]})
 let weekData = [0, 0, 0, 0, 0, 0];
 
 const weeklySalesData = {
@@ -152,18 +157,44 @@ for (let i in v) {
 }
 }
 
+
+
 onMounted(async () => {
+  // console.log('Day 1: ', getWeekRange(d).from.toDateString())
+  // console.log('Today: ', new Date().toDateString())
+  const start = getWeekRange(d).from.toDateString()
+  const end = getWeekRange(d).to.toDateString()
+  const todays = new Date().toDateString()
+  // console.log(`
+  // Today: ${todays} - 
+  // Start: ${start} - 
+  // End: ${end}
+  // `)
+  const theBool = todays >= start && todays <= end ? true : false
+  console.log(`Today is ${theBool}`)
   const wkArrRef = doc(db, 'week-stats', "WDT")
-  const wkSnap = await getDoc(wkArrRef)
+  if (theBool) {
+    const wkSnap = await getDoc(wkArrRef)
 if (wkSnap.exists()) {
  // console.log('totalsArr: ', store.weekDayTotalArray)
   console.log('wksnap: ', wkSnap.data().wkArr)
-  // for (let snap in wkSnap.data().wkArr) {
-  //   weekData[+snap] = wkSnap.data().wkArr[snap]
-  // }
-  processData(wkSnap.data().wkArr)
+
+ // processData(wkSnap.data().wkArr)
+ const temp = wkSnap.data().wkArr
+ console.log('temp: ', temp)
+
+ processData(temp)
+ console.log('weekData: ', weekData)
+
+
+} else {
+  console.log('No document for wKArrRef exists!')
 }
+  } else {
+    await deleteDoc(doc(db, 'week-stats', "WDT"))
+  }
 })
+
 </script>
 
 <style scoped>
@@ -180,5 +211,10 @@ if (wkSnap.exists()) {
 
 .month-div {
   margin-top: 25%;
+}
+
+#week-range-row {
+  font-size: 12px;
+  color: grey;
 }
 </style>

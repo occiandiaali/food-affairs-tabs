@@ -111,7 +111,8 @@
           </div>
         </ion-list>
       </div>
-      <div v-else id="no-internet-div">
+      <div style="align-self: center; padding-top: 15%; padding-left: 35%;" v-else>Loading menu..</div>
+      <div v-if="!isOnline" id="no-internet-div">
         <h2>Internet connection issue..</h2>
         <span id="internet-out-advice">Make sure you're connected, then refresh this page</span>
         <ion-icon :icon="wifiOutline" color="danger" id="internet-out-icon"></ion-icon>
@@ -147,6 +148,7 @@ import { globeOutline, trashOutline, wifiOutline } from "ionicons/icons";
 import { addDoc, collection, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import db from "./../firebase/init.js";
 import {useWeekStatStore} from './../stores/weekStatStore'
+import {checkOnlineStatus} from './../services/checkOnlineStatus.js'
 
 const store = useWeekStatStore()
 const today = new Date().getDay()
@@ -165,6 +167,13 @@ const resultRef = ref<DocumentData[]>([])
 const loadingFromFirestore = ref(true)
 let savingEntry = ref(false)
 let weekTotalsArr = [0, 0, 0, 0, 0, 0]
+
+const isOnline = ref(true)
+// intermittent check for connectivity
+setInterval(async () => {
+  const result = await checkOnlineStatus()
+  !result ? isOnline.value = false : isOnline.value = true 
+}, 60000)
 
 
 // sortedMenu = resultRef.value.sort((a, b) => {
