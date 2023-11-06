@@ -253,7 +253,7 @@ const getOrders = async () => {
         orders.push(doc.data())
         loadingRecords.value = false;
     })
-    return orders;
+    return orders.reverse();
 }
 
 onMounted(async () => {

@@ -201,7 +201,7 @@ const orderClear = () => {
   transferDetails.value = ""
   customerPhone.value = ""
   order.value = []
- // location.reload()
+  location.reload()
 }
 
 const checkedItem = (price: string, title: string, portion: string) => {
@@ -290,7 +290,7 @@ const saveOrderEntry = async () => {
   `)
   orderClear()
   document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
- // location.reload()
+
 }
 
 const getMenuFromFirestore = async () => {

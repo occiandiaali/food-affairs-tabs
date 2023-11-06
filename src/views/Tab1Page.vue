@@ -173,20 +173,25 @@ onMounted(async () => {
   const theBool = todays >= start && todays <= end ? true : false
   console.log(`Today is ${theBool}`)
   const wkArrRef = doc(db, 'week-stats', "WDT")
+
   if (theBool) {
     const wkSnap = await getDoc(wkArrRef)
 if (wkSnap.exists()) {
- // console.log('totalsArr: ', store.weekDayTotalArray)
-  console.log('wksnap: ', wkSnap.data().wkArr)
+//   console.log('wksnap: ', wkSnap.data().wkArr)
 
- // processData(wkSnap.data().wkArr)
- const temp = wkSnap.data().wkArr
- console.log('temp: ', temp)
+//  const temp = wkSnap.data().wkArr
+//  console.log('temp: ', temp)
 
- processData(temp)
- console.log('weekData: ', weekData)
-
-
+//  processData(temp)
+//  console.log('weekData: ', weekData)
+const strTemp = JSON.stringify(wkSnap.data().wkArr)
+console.log('Str temp: ', strTemp)
+const temp = JSON.parse(strTemp)
+console.log('temp: ', temp)
+for (let i in temp) {
+  weekData[+i] = temp[i]
+}
+console.log('weekData: ', weekData)
 } else {
   console.log('No document for wKArrRef exists!')
 }
