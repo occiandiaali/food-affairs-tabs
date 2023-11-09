@@ -1,18 +1,9 @@
 <template>
   <ion-page>
-    <!-- <ion-header>
-      <ion-toolbar>
-        <ion-title>Tab 2</ion-title>
-      </ion-toolbar>
-    </ion-header> -->
     <ion-content :fullscreen="true" class="ion-padding">
-      <!-- <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Tab 2</ion-title>
-        </ion-toolbar>
-      </ion-header> -->
+
       <div class="section-div">
-        <!-- <h2>Record new sale</h2> -->
+    
         <div class="order-items-div">
           <ion-list class="order-items-div-list" v-if="order.length">
  
@@ -29,7 +20,6 @@
           </div>
         </div>
         <ion-item id="radio-item">
-          <!-- <ion-label>Paid</ion-label> -->
             <div id="radio-buttons-div">
               <label for="cash" class="radio-label">Cash</label>
               <input
@@ -79,16 +69,11 @@
           </ion-item>
           <div class="save-div">
             <ion-button shape="round" :disabled="(!transferDetails || paymentType === '--') && !order.length" @click="saveOrderEntry">{{ savingEntry ? "Wait.." : "Save" }}</ion-button>
-            <!-- <ion-button shape="round" :disabled="(!transferDetails || paymentType === '--') && !order.length" @click="showTotal">Total</ion-button> -->
             <div v-if="paymentType !== '--' || transferDetails.length || order.length">
             <ion-icon @click="orderClear" :icon="trashOutline" color="danger"></ion-icon>
           </div>
           </div>
-          <!-- <ion-searchbar
-          show-clear-button="focus"
-          v-model="filterTerm"
-          placeholder="Search"
-        ></ion-searchbar> -->
+
       </div>
       <div class="menu-section-div" v-if="resultRef.length">
         <ion-list>
@@ -126,31 +111,24 @@
 import { computed, ComputedRef, onMounted, ref } from "vue";
 import {
   IonButton,
-  IonButtons,
+
   IonContent,
-  IonHeader,
+ 
   IonIcon,
   IonItem,
   IonInput,
   IonLabel,
   IonList,
-  IonMenuButton,
   IonPage,
-  IonSearchbar,
-  IonSelect,
-  IonSelectOption,
   IonText,
-  IonTextarea,
-  IonToolbar,
+
 } from "@ionic/vue";
-import { globeOutline, trashOutline, wifiOutline } from "ionicons/icons";
-//import dummydata from './../assets/dummy-menu.json'
+import { trashOutline, wifiOutline } from "ionicons/icons";
+
 import { addDoc, collection, doc, DocumentData, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import db from "./../firebase/init.js";
-import {useWeekStatStore} from './../stores/weekStatStore'
 import {checkOnlineStatus} from './../services/checkOnlineStatus.js'
 
-const store = useWeekStatStore()
 const today = new Date().getDay()
 
 const paymentType = ref("--")
@@ -163,7 +141,7 @@ const dailyTotal = ref(0)
 
 const tempArr: DocumentData[] = [];
 const resultRef = ref<DocumentData[]>([])
-//let sortedMenu: DocumentData[] = [];
+
 const loadingFromFirestore = ref(true)
 let savingEntry = ref(false)
 let weekTotalsArr = [0, 0, 0, 0, 0, 0]
@@ -174,20 +152,6 @@ setInterval(async () => {
   const result = await checkOnlineStatus()
   !result ? isOnline.value = false : isOnline.value = true 
 }, 60000)
-
-
-// sortedMenu = resultRef.value.sort((a, b) => {
-//  let lowerTitA = a.title.toLowerCase(),
-// lowerTitB = b.title.toLowerCase()
-
-// if (lowerTitA < lowerTitB) {
-//   return -1
-// }
-// if (lowerTitA > lowerTitB) {
-//   return 1
-// }
-// return 0
-// })
 
 const order = ref<{
   title: string,
@@ -254,7 +218,7 @@ const saveOrderEntry = async () => {
   savingEntry.value = true;
   
   const recordRef = collection(db, "orders")
-  const weekStatsRef = collection(db, 'week-stats')
+ // const weekStatsRef = collection(db, 'week-stats')
 
   // create new data as obj to send to firestore
   const dataObj = {
@@ -289,14 +253,13 @@ const saveOrderEntry = async () => {
   Customer: ${customerPhone.value}
   `)
   orderClear()
-  document.getElementById("sms-tag")?.click()// [TODO]: Uncomment to send sms notification
+  document.getElementById("sms-tag")?.click()
 
 }
 
 const getMenuFromFirestore = async () => {
   const querySnap = await getDocs(collection(db, "menu"));
   querySnap.forEach((doc) => {
-  //  console.log("doc: ", JSON.stringify(doc.data()))
     tempArr.push(doc.data());
     loadingFromFirestore.value = false;
   });
