@@ -52,8 +52,8 @@
                   <ion-list>
                     <ion-item v-for="it in item.items">
                       <ion-text>{{it.portion}} portion(s) of</ion-text>
-                  <ion-text>{{ it.title }}</ion-text>
-              <ion-text>NGN {{ it.price }}</ion-text>
+                  <ion-text>{{ it.title }} @ {{ ' ' }}</ion-text>
+              <ion-text>NGN {{ it.unit }}</ion-text>
                 </ion-item>
                   </ion-list>
                 </div>
@@ -78,12 +78,7 @@
                       }}</span>
                     </p>
                   </ion-label>
-                  <!-- <ion-button
-                    fill="outline"
-                    @click="confirmTransaction(item.transferDetails)"
-                    :disabled="item.transferConfirmed"
-                    >{{ !item.transferConfirmed ? 'Confirm' : 'Done' }}</ion-button
-                  > -->
+
                   <div v-if="!processingTransfer">
                     <ion-button
                     fill="outline"
