@@ -11,7 +11,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-        <div v-if="loadingRecords" class="content-div">Loading...</div>
+        <div v-if="loadingRecords && resultRef.length" class="content-div">Loading...</div>
         <div v-if="resultRef.length" id="records-list-div">
             <ion-searchbar
             v-model="filterTerm"
